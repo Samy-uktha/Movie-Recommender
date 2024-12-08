@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Recommender System</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Movie Recommender System</h1>
+        <!-- Movie Selection Form -->
+        <div class="p-4 border rounded bg-white shadow-sm">
+
+            <form method="POST" >
+                <div class="mb-3">
+                    <label for="movie">Select a Movie</label>
+                    <select id="movie" name="movie" class="form-select">
+                        <option value="" disabled {% if not selected_movie %} selected {% endif %}>
+                            View available movies
+                        </option>
+                        {% for movie in movie_list %}
+                            <option value="{{ movie }}" {% if movie == selected_movie %} selected {% endif %}>
+                                {{ movie }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Show Recommendation</button>
+            </form>
+
+            {% if recommended_movie_names %}
+        <!--            <h3 class="mt-5">Recommended Movies</h3>-->
+        <!--            <div class="row mt-4">-->
+        <!--                {% for name in recommended_movie_names %}-->
+        <!--                    <div class="col-md-2 mb-4">-->
+        <!--                        <h3>{{name}}</h3>-->
+        <!--                    </div>-->
+        <!--                {% endfor %}-->
+        <!--            </div>-->
+                <h3 class="mt-5">Recommended Movies</h3>
+                    <div class="table-responsive mt-4">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Movie Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for name in recommended_movie_names %}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td>{{ name }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy0wPp9q+hn7MZ5FfG9to2W6f2lCvklgWnB5AtKp" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-pzjw8f+ua7Kw1TIq0iZpW5t9/Oz37J5EXj1OX4wxs0u1y/2J0Z4j1nFqcXFi/x6T" crossorigin="anonymous"></script>
+</body>
+</html>
