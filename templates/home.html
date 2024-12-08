@@ -32,15 +32,7 @@
                 <button type="submit" class="btn btn-primary w-100">Show Recommendation</button>
             </form>
 
-            {% if recommended_movie_names %}
-        <!--            <h3 class="mt-5">Recommended Movies</h3>-->
-        <!--            <div class="row mt-4">-->
-        <!--                {% for name in recommended_movie_names %}-->
-        <!--                    <div class="col-md-2 mb-4">-->
-        <!--                        <h3>{{name}}</h3>-->
-        <!--                    </div>-->
-        <!--                {% endfor %}-->
-        <!--            </div>-->
+            {% if recommended_movies %}
                 <h3 class="mt-5">Recommended Movies</h3>
                     <div class="table-responsive mt-4">
                         <table class="table table-striped">
@@ -48,13 +40,20 @@
                                 <tr>
                                     <th>No.</th>
                                     <th>Movie Name</th>
+                                    <th>Director</th>
+                                    <th>Actors</th>
+                                    <th>Genres</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for name in recommended_movie_names %}
+                                {% for movie in recommended_movies %}
+
                                     <tr>
                                         <td>{{ loop.index }}</td>
-                                        <td>{{ name }}</td>
+                                        <td>{{ movie['title'] }}</td>
+                                        <td>{{ movie['director'][0] }}</td>
+                                        <td>{{ movie['actors']|join(', ') }}</td>
+                                        <td>{{ movie['genres_str']|join(', ') }}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

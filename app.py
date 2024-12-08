@@ -10,12 +10,6 @@ app = Flask(__name__)
 movies = pd.read_csv('static/movies.csv')
 credits = pd.read_csv('static/credits.csv')
 
-# Merge and clean data
-# movies = movies.merge(credits, on='title')
-# movies.dropna(inplace=True)
-# movies.drop_duplicates(inplace=True)
-
-
 # Preprocessing functions
 def convert(obj):
     if isinstance(obj, str):
@@ -52,7 +46,7 @@ def fetch_director(obj):
 movies = movies.merge(credits, on='title')  # Update 'movie_id' or use the correct column name
 
 # Step 3: After merging, print columns to identify the correct ones
-print(movies.columns)
+# print(movies.columns)
 
 # Step 4: Preprocess and clean the data
 movies['genres'] = movies['genres'].apply(convert)
@@ -63,6 +57,10 @@ movies['crew'] = movies['crew'].apply(fetch_director)
 # Apply a safe split to the 'overview' column
 movies['overview'] = movies['overview'].apply(lambda x: x.split() if isinstance(x, str) else [])
 
+movies['director'] = movies['crew']
+movies['actors'] = movies['cast']
+movies['genres_str'] = movies['genres']
+
 # Remove spaces
 movies['genres'] = movies['genres'].apply(lambda x: [i.replace(" ", "") for i in x])
 movies['keywords'] = movies['keywords'].apply(lambda x: [i.replace(" ", "") for i in x])
@@ -71,27 +69,15 @@ movies['crew'] = movies['crew'].apply(lambda x: [i.replace(" ", "") for i in x])
 
 # Create 'tags' and new DataFrame
 movies['tags'] = movies['overview'] + movies['genres'] + movies['keywords'] + movies['cast'] + movies['crew']
-new_df = movies[['movie_id', 'title', 'tags']]  # Make sure 'title' exists
+new_df = movies[['movie_id', 'title', 'tags', 'director', 'actors', 'genres_str']]  # Make sure 'title' exists
 new_df.loc[:, 'tags'] = new_df['tags'].apply(lambda x: " ".join(x).lower())
 
-# Continue with the rest of your logic...
-# Apply preprocessing
-# movies['genres'] = movies['genres'].apply(convert)
-# movies['keywords'] = movies['keywords'].apply(convert)
-# movies['cast'] = movies['cast'].apply(convert3)
-# movies['crew'] = movies['crew'].apply(fetch_director)
-# movies['overview'] = movies['overview'].apply(lambda x: x.split() if isinstance(x, str) else [])
-#
-# # Remove spaces
-# movies['genres'] = movies['genres'].apply(lambda x: [i.replace(" ", "") for i in x])
-# movies['keywords'] = movies['keywords'].apply(lambda x: [i.replace(" ", "") for i in x])
-# movies['cast'] = movies['cast'].apply(lambda x: [i.replace(" ", "") for i in x])
-# movies['crew'] = movies['crew'].apply(lambda x: [i.replace(" ", "") for i in x])
-#
-# # Create 'tags' and new DataFrame
-# movies['tags'] = movies['overview'] + movies['genres'] + movies['keywords'] + movies['cast'] + movies['crew']
-# new_df = movies[['movie_id', 'title', 'tags']]
-# new_df['tags'] = new_df['tags'].apply(lambda x: " ".join(x).lower())
+# print(movies['director'].values)
+# print(movies['actors'].values)
+# print(movies['genres_str'].values)
+# print(movies['actors'])
+# print(new_df.columns)
+
 
 # Count vectorizer and similarity matrix
 count_vectorizer = CountVectorizer(stop_words='english')
@@ -100,7 +86,7 @@ cosine_sim = cosine_similarity(count_matrix, count_matrix)
 
 
 # Recommendation function
-def get_recommendations(title, cosine_sim=cosine_sim):
+def get_recommendations(title, cosine_sim = cosine_sim):
     indices = pd.Series(new_df.index, index=new_df['title']).drop_duplicates()
     if title not in indices:
         return []
@@ -108,24 +94,29 @@ def get_recommendations(title, cosine_sim=cosine_sim):
     sim_scores = list(enumerate(cosine_sim[idx]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:11]
     movie_indices = [i[0] for i in sim_scores]
-    return new_df['title'].iloc[movie_indices].tolist()
+    recommended_movies = new_df.iloc[movie_indices]
+    print(recommended_movies)
+
+    return recommended_movies[['title', 'director', 'actors', 'genres_str']].to_dict(orient='records')
 
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
     selected_movie = None
-    recommended_movie_names = []
+    recommended_movies = []
 
     if request.method == 'POST':
         selected_movie = request.form['movie']
-        recommended_movie_names = get_recommendations(selected_movie)
+        recommended_movies = get_recommendations(selected_movie)
+        print(recommended_movies)
+
 
     movie_list = sorted(new_df['title'].unique().tolist())
     return render_template(
         'home.html',
         movie_list=movie_list,
         selected_movie=selected_movie,
-        recommended_movie_names=recommended_movie_names
+        recommended_movies=recommended_movies
     )
 
 
