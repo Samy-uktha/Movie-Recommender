@@ -23,7 +23,7 @@ def convert(obj):
 def convert3(obj):
     if isinstance(obj, str):
         try:
-            return [i['name'] for i in ast.literal_eval(obj)[:3]]
+            return [i['name'] for i in ast.literal_eval(obj)[:5]]
         except (ValueError, SyntaxError):
             return []
     return obj[:3] if isinstance(obj, list) else []
@@ -95,7 +95,7 @@ def get_recommendations(title, cosine_sim = cosine_sim):
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:11]
     movie_indices = [i[0] for i in sim_scores]
     recommended_movies = new_df.iloc[movie_indices]
-    print(recommended_movies)
+    # print(recommended_movies)
     return recommended_movies[['title', 'director', 'actors', 'genres_str']].to_dict(orient='records')
 
 def recommend_by_actor(actor_name):
@@ -130,21 +130,22 @@ def home():
                               (sublist if isinstance(sublist, list) else [sublist])]))
 
     if request.method == 'POST':
-        selected_movie = request.form.get('movie', None)
-        selected_actor = request.form.get('actor', None)
-        selected_director = request.form.get('director', None)
-        selected_genre = request.form.get('genre', None)
+        search_type = request.form.get('search_type')
 
-        # actors_list = sorted(new_df['actors'].unique().tolist())
-        # directors_list = sorted(new_df['director'].unique().tolist())
-        # genres_list = sorted(new_df['genre'].unique().tolist())
+        if search_type == 'by_movie':
+            selected_movie = request.form.get('movie', None)
+            if selected_movie:
+                filtered_movies = get_recommendations(selected_movie)
+                recommended_movies = filtered_movies
 
-        filtered_movies = new_df
-        if selected_movie:
-            filtered_movies = get_recommendations(selected_movie)
-            recommended_movies = filtered_movies
+        elif search_type == 'by_filters':
+            selected_actor = request.form.get('actor', None)
+            selected_director = request.form.get('director', None)
+            selected_genre = request.form.get('genre', None)
+
+            filtered_movies = new_df
+
             # filtered_movies = [movie for movie in filtered_movies if movie['title'] == selected_movie]
-        else:
             if selected_actor:
                 filtered_movies = filtered_movies[filtered_movies['actors'].apply(lambda actors: selected_actor in actors)]
             if selected_director:
@@ -180,7 +181,7 @@ def home():
         selected_director=selected_director,
         selected_genre=selected_genre,
         recommended_movies=recommended_movies,
-        no_results_message = no_results_message
+        no_results_message=no_results_message
     )
 
 

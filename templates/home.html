@@ -15,39 +15,15 @@
         <!-- Movie Selection Form -->
         <div class="p-4 border rounded bg-white shadow-sm">
 
-            <form method="POST" >
+            <form method="POST">
 
-                <div class="m-3 text-center">
-                    View top 10 recommendations based on preferred movie
-                </div>
-
-                <div class="card">
-<!--                    <div class="card-header text-center ">-->
-<!--                        View top 10 recommendations based on preferred movie-->
-<!--                    </div>-->
-<!--               movie dropdown-->
-                <div class=" m-4">
-                    <label for="movie">Select a Movie</label>
-                    <select id="movie" name="movie" class="form-select select2">
-                        <option value="" disabled {% if not selected_movie %} selected {% endif %}>View available movies</option>
-                        {% for movie in movie_list %}
-                            <option value="{{ movie }}" {% if movie == selected_movie %} selected {% endif %}>{{ movie }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                </div>
-
-                <div class="m-3 text-center">
-                    Or find movies based on :
-                </div>
-
-                <div class="card mt-4 mb-4">
+                <div class=" card">
 <!--                    <div class="card-header">-->
 <!--                        or select based on :-->
 <!--                    </div>-->
                 <div class="row m-3">
 <!--                actor dropdown-->
-                <div class="col-md-4 mb-3">
+                <div class="col-md-3">
                     <label for="actor">Select an Actor</label>
                     <select id="actor" name="actor" class="form-select select2">
                         <option value="" {% if not selected_actor %} selected {% endif %}>Choose an actor</option>
@@ -58,7 +34,7 @@
                 </div>
 
 <!--                director dropdown-->
-                <div class="col-md-4 mb-3">
+                <div class="col-md-3">
                     <label for="director">Select a Director</label>
                     <select id="director" name="director" class="form-select select2">
                         <option value="" {% if not selected_director %} selected {% endif %}>Choose a director</option>
@@ -69,7 +45,7 @@
                 </div>
 
 <!--                genre dropdown-->
-                <div class="col-md-4 mb-3">
+                <div class="col-md-3">
                     <label for="genre">Select a Genre</label>
                     <select id="genre" name="genre" class="form-select select2">
                         <option value="" {% if not selected_genre %} selected {% endif %}>Choose a genre</option>
@@ -78,11 +54,34 @@
                         {% endfor %}
                     </select>
                 </div>
-
+                <div class=" col-md-3 mt-4">
+                    <button type="submit" name="search_type" value="by_filters" class="btn btn-success">Find Movies</button></div>
+                </div>`
                     </div>
 
-            </div>
-                <button type="submit" class="btn btn-primary w-100">Show Recommendation</button>
+
+                <div class="mt-4 text-center">
+                    <h5>View top 10 recommendations based on preferred movie</h5>
+                </div>
+
+                <div class="">
+<!--               movie dropdown-->
+                    <div class="row m-3">
+                <div class="mb-3">
+                    <label for="movie">Select a Movie</label>
+                    <select id="movie" name="movie" class="form-select select2">
+                        <option value="" disabled {% if not selected_movie %} selected {% endif %}>View available movies</option>
+                        {% for movie in movie_list %}
+                            <option value="{{ movie }}" {% if movie == selected_movie %} selected {% endif %}>{{ movie }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                  <div class="text-center mb-3">
+                <button type="submit" name="search_type" value="by_movie" class="btn btn-primary">Show Recommendations</button>
+                </div>
+                    </div>
+                </div>
+
             </form>
 
             <div class="mt-3">
