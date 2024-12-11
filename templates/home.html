@@ -10,10 +10,10 @@
 
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="text-center mb-4">Movie Recommender System</h1>
+    <div class="container mt-4">
+        <h1 class="text-center mb-3">Movie Recommender System</h1>
         <!-- Movie Selection Form -->
-        <div class="p-4 border rounded bg-white shadow-sm">
+        <div class="p-4 border rounded bg-white shadow">
 
             <form method="POST">
 
@@ -21,7 +21,7 @@
 <!--                    <div class="card-header">-->
 <!--                        or select based on :-->
 <!--                    </div>-->
-                <div class="row m-3">
+                <div class="row m-1">
 <!--                actor dropdown-->
                 <div class="col-md-3">
                     <label for="actor">Select an Actor</label>
@@ -54,7 +54,7 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class=" col-md-3 mt-4">
+                <div class=" col-md-3 mt-3 ">
                     <button type="submit" name="search_type" value="by_filters" class="btn btn-success">Find Movies</button></div>
                 </div>`
                     </div>
@@ -99,7 +99,7 @@
                                     <th>No.</th>
                                     <th>Movie Name</th>
                                     <th>Director</th>
-                                    <th>Actors</th>
+                                    <th>Cast</th>
                                     <th>Genres</th>
                                 </tr>
                             </thead>
