@@ -3,6 +3,7 @@ import pandas as pd
 import ast
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from query import recommend_movies
 
 app = Flask(__name__)
 
@@ -71,12 +72,13 @@ movies['crew'] = movies['crew'].apply(lambda x: [i.replace(" ", "") for i in x])
 movies['tags'] = movies['overview'] + movies['genres'] + movies['keywords'] + movies['cast'] + movies['crew']
 new_df = movies[['movie_id', 'title', 'tags', 'director', 'actors', 'genres_str']]  # Make sure 'title' exists
 new_df.loc[:, 'tags'] = new_df['tags'].apply(lambda x: " ".join(x).lower())
-
+# print(movies.columns)
 # print(movies['director'].values)
 # print(movies['actors'].values)
 # print(movies['genres_str'].values)
 # print(movies['actors'])
 # print(new_df.columns)
+# print(movies['tags'][0])
 
 
 # Count vectorizer and similarity matrix
@@ -132,7 +134,16 @@ def home():
     if request.method == 'POST':
         search_type = request.form.get('search_type')
 
-        if search_type == 'by_movie':
+        if search_type == 'by_query':
+            user_query = request.form.get('query','').strip()
+            if user_query:
+                query_result = recommend_movies(user_query, movies)
+                recommended_movies = query_result[['title', 'director', 'actors', 'genres_str']].to_dict(
+                    orient='records')
+            else:
+                recommended_movies = []
+
+        elif search_type == 'by_movie':
             selected_movie = request.form.get('movie', None)
             if selected_movie:
                 filtered_movies = get_recommendations(selected_movie)
@@ -181,7 +192,7 @@ def home():
         selected_director=selected_director,
         selected_genre=selected_genre,
         recommended_movies=recommended_movies,
-        no_results_message=no_results_message
+        no_results_message=no_results_message,
     )
 
 
